@@ -1,149 +1,179 @@
-# Basecamp Reset Script
+# 🏠 Roblox Basecamp Reset Script
 
-A lightweight, performance-optimized GUI script for Roblox that allows players to instantly return to their basecamp or spawn location with smooth animations.
+Script Roblox yang memungkinkan player untuk kembali ke basecamp dengan satu klik tombol, lengkap dengan reset checkpoint dan healing otomatis.
 
-## Features
+![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![Roblox](https://img.shields.io/badge/Roblox-Script-red)
+![License](https://img.shields.io/badge/license-MIT-green)
 
-✨ **Smooth Animations**
-- Pulse effect on button click
-- Flash effect on stroke border
-- Hover state color transitions
-- Elastic easing for natural feel
+## ✨ Fitur
 
-📱 **Cross-Platform Support**
-- Automatic mobile (touch-enabled) detection
-- Responsive button sizing (32x32 on mobile, 36x36 on PC)
-- Touch tap support for mobile users
+- 🏠 **Teleport ke Basecamp** - Kembali ke spawn point dengan satu klik
+- 🔄 **Reset Checkpoint** - Menghapus checkpoint/stage yang tersimpan
+- ❤️ **Auto Healing** - Mengisi HP penuh saat reset
+- 🎨 **UI Modern** - Button elegan dengan animasi smooth
+- 📱 **Mobile & PC Support** - Responsive untuk semua device
+- ⚡ **Lightweight** - Tidak membebani performa game
+- 🎭 **Animasi Smooth** - Pulse effect dan hover animation
 
-🎯 **Lightweight & Performance**
-- Minimal resource usage
-- Optimized tweening system
-- No lag or frame rate drops
-- Efficient garbage collection
+## 📸 Preview
 
-🎨 **Modern UI Design**
-- Elegant blue color scheme
-- Rounded corners with UICorner
-- Stylish border with UIStroke
-- Clean home icon (⌂) button
+Button akan muncul di pojok kanan atas layar dengan icon ⌂ (home).
 
-⚡ **Easy to Use**
-- Simple one-click reset functionality
-- Automatic basecamp detection
-- Fallback spawn location support
-- In-game notification system
+**Fitur Visual:**
+- Hover effect dengan perubahan warna smooth
+- Pulse animation saat di-klik
+- Flash effect pada border
+- Notifikasi saat script aktif
 
-## Installation
+## 📦 Instalasi
 
-1. Open your Roblox game in Studio
-2. Go to **StarterGui** in the Explorer
-3. Insert a new **LocalScript**
-4. Copy and paste the script content into the LocalScript
-5. Ensure you have a Part named "Basecamp", "SpawnLocation", or "Base" in your workspace (or modify the script to match your spawn location name)
+1. Buka Roblox Studio
+2. Buka game project Anda
+3. Navigasi ke **StarterGui**
+4. Klik kanan → **Insert Object** → **LocalScript**
+5. Copy-paste script dari file `basecampReset.lua`
+6. Rename script (opsional)
+7. Test di game!
 
-## Usage
+## 🎮 Cara Penggunaan
 
-- **Click the ⌂ button** in the top-right corner to reset to basecamp
-- **On mobile**: Tap the button to trigger reset
-- The notification will confirm the reset action
-- If basecamp is not found, the player spawns at default location (0, 50, 0)
+1. Join game Anda
+2. Lihat button ⌂ di pojok kanan atas
+3. Klik button untuk:
+   - Teleport ke basecamp
+   - Reset checkpoint/stage
+   - Heal HP penuh
 
-## Script Details
+**Kontrol:**
+- **PC:** Klik button dengan mouse
+- **Mobile:** Tap button
 
-### Main Components
+## ⚙️ Konfigurasi
 
-**resetToBasecamp()** - Core reset function
-- Detects player character and HumanoidRootPart
-- Searches for basecamp location
-- Teleports player 3 studs above basecamp
-- Falls back to default location if basecamp not found
+### Mengubah Nama Basecamp
 
-**GUI Creation** - Modern button interface
-- Platform-aware sizing
-- Positioned in top-right corner
-- UICorner and UIStroke for modern aesthetics
-
-**Animations** - Lightweight effects
-- Hover: Color transition (0.15s)
-- Click: Pulse scale + flash effect (0.05-0.1s)
-- No continuous looping animations
-
-### Configuration
-
-Modify these lines to customize the script:
+Edit bagian ini di script untuk menyesuaikan nama basecamp Anda:
 
 ```lua
--- Change basecamp detection
-local basecamp = workspace:FindFirstChild("Basecamp") or workspace:FindFirstChild("SpawnLocation")
-
--- Adjust spawn height above basecamp
-local spawnPos = basecamp.Position + Vector3.new(0, 3, 0)
-
--- Change button size for mobile/PC
-local buttonSizeX = isMobile and 32 or 36
-
--- Customize colors
-toggleButton.BackgroundColor3 = Color3.fromRGB(59, 89, 152)
-
--- Adjust animation duration
-TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+local basecamp = workspace:FindFirstChild("Basecamp") 
+    or workspace:FindFirstChild("SpawnLocation") 
+    or workspace:FindFirstChild("Base")
 ```
 
-## Requirements
+### Mengubah Posisi Button
 
-- Roblox game with a valid spawn location part
-- LocalScript placed in StarterGui
-- Game must support UserInputService
+```lua
+-- Posisi button (default: pojok kanan atas)
+local buttonPosition = UDim2.new(1, -42, 0, -2)
+```
 
-## Performance
+### Mengubah Ukuran Button
 
-- **Memory**: ~50KB
-- **CPU**: Minimal (only active on button interaction)
-- **Animations**: GPU-accelerated tweens
-- **Frame Rate**: No impact on game FPS
+```lua
+-- Ukuran button
+local buttonSizeX = isMobile and 32 or 36
+local buttonSizeY = isMobile and 32 or 36
+```
 
-## Compatibility
+### Mengubah Warna
 
-- ✅ PC (Mouse & Keyboard)
-- ✅ Mobile (Touch)
-- ✅ Console (if supported by game)
-- ✅ Roblox Studio
+```lua
+-- Warna button
+toggleButton.BackgroundColor3 = Color3.fromRGB(59, 89, 152)
 
-## Customization
+-- Warna border/stroke
+stroke.Color = Color3.fromRGB(100, 150, 220)
+```
 
-You can customize:
-- Button size and position
-- Colors and styling
-- Animation duration and easing
-- Notification text and duration
-- Basecamp detection method
+## 🔧 Kompatibilitas
 
-## Troubleshooting
+Script ini kompatibel dengan:
+- ✅ Stage-based Obbies
+- ✅ Tower Games
+- ✅ Adventure Games
+- ✅ Checkpoint Systems
+- ✅ RespawnLocation Systems
+- ✅ Leaderstats Stage Systems
 
-**Button not appearing?**
-- Check if script is placed in StarterGui
-- Verify script is a LocalScript, not a regular Script
-- Check ResetOnSpawn property is false
+**Tested on:**
+- Mobile (iOS & Android)
+- PC (Windows & Mac)
+- Tablet
 
-**Reset not working?**
-- Ensure your spawn location part exists
-- Verify the part name matches the search criteria
-- Check console for error messages (Ctrl + Shift + F9 in Studio)
+## 📋 Requirements
 
-**Character not found error?**
-- Make sure player has spawned in game
-- Check if character is still loading
-- Verify HumanoidRootPart exists in character
+- Roblox Studio
+- LocalScript support
+- StarterGui access
 
-## License
+**Tidak memerlukan:**
+- Server scripts
+- RemoteEvents
+- DataStore
+- HTTP Service
 
-This project is open source and available for use in any Roblox game.
+## 🛠️ Troubleshooting
 
-## Support
+### Button tidak muncul?
+- Pastikan script ada di **StarterGui** sebagai **LocalScript**
+- Check console untuk error messages
+- Pastikan `ResetOnSpawn = false` di ScreenGui
 
-For issues, suggestions, or improvements, feel free to create an issue or pull request.
+### Teleport tidak bekerja?
+- Pastikan ada Part bernama "Basecamp", "SpawnLocation", atau "Base" di Workspace
+- Check posisi basecamp (harus ada collision)
+- Pastikan character memiliki HumanoidRootPart
+
+### Checkpoint tidak reset?
+- Check apakah game menggunakan custom checkpoint system
+- Modifikasi fungsi `resetCheckpoint()` sesuai sistem game Anda
+- Hubungi developer untuk custom implementation
+
+## 🤝 Contributing
+
+Kontribusi sangat diterima! Silakan:
+
+1. Fork repository ini
+2. Create feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open Pull Request
+
+## 📝 Changelog
+
+### Version 1.0.0 (2025-10-18)
+- ✨ Initial release
+- 🏠 Basecamp teleport feature
+- 🔄 Checkpoint reset system
+- ❤️ Auto healing
+- 🎨 Modern UI with animations
+- 📱 Mobile & PC support
+
+## 📄 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+## 👤 Author
+
+**Your Name**
+- GitHub: [@yourusername](https://github.com/yourusername)
+- Roblox: [@yourrobloxname](https://www.roblox.com/users/USERID/profile)
+
+## 🌟 Support
+
+Jika script ini membantu, berikan ⭐ star pada repository!
+
+**Found a bug?** Open an issue
+**Have suggestions?** Create a discussion
+**Want to contribute?** Submit a pull request
+
+## 📞 Contact
+
+- Discord: YourDiscord#0000
+- Email: your.email@example.com
+- Roblox Group: [Your Group](https://www.roblox.com/groups/GROUPID)
 
 ---
 
-**Last Updated**: October 2025
-**Version**: 1.0.0
+Made with ❤️ for Roblox Community
