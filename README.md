@@ -1,152 +1,158 @@
-# 🏠 Roblox Basecamp Reset Script
+# 🏠 Roblox Basecamp Reset Button
 
-A Roblox script that allows players to easily reset all checkpoints and return to basecamp with a single click or keyboard keystroke. It features a super minimalist, responsive toggle button that doesn't interrupt gameplay.
+A sleek and modern GUI button for Roblox that allows players to instantly teleport back to their basecamp/spawn location with a single click.
 
-## ✨ Key Features
+## ✨ Features
 
-- **Ultra Minimalist Toggle Button** - An elegant house icon (⌂) in the top right corner of the screen, close to the end
-- **Optimal Size** - Mobile: 32×32px |  PC: 36x36px (does not interfere with gameplay)
-- **Responsive Design** - Button size automatically adjusts for PC and mobile
-- **Smooth Animations** - Hover and click effects with smooth and fluid tweens
-- **Multi-Platform Controls** - Click buttons or press the **R** key on PC, tap on mobile
-- **Lightweight** - Script is lightweight and does not affect game performance
-- **Modern UI** - Attractive corner radius, stroke border, and color transitions
-- **Auto Device Detection** - Automatically detects player device (PC vs. mobile)
-- **Error Handling** - Fallback system if basecamp is not found
+- 🎯 **One-Click Reset** - Instantly teleport back to basecamp
+- 📱 **Cross-Platform** - Works on both PC and Mobile
+- 🎨 **Modern UI Design** - Clean, minimal interface with smooth animations
+- 🔘 **Button-Only Control** - No keyboard shortcuts to prevent accidental resets
+- 💫 **Smooth Animations** - Hover effects and click feedback
+- 📍 **Smart Detection** - Automatically finds basecamp/spawn location
+- 🔔 **Visual Notifications** - Clear feedback when reset is successful
 
-## 📋 Requirements
+## 🎮 Installation
 
-- Roblox Studio or Roblox Game
-- LocalScript in **StarterGui**
-- Part named "Basecamp," "SpawnLocation," or "Base" in Workspace (optional)
+1. Open Roblox Studio
+2. Navigate to **StarterGui**
+3. Insert a new **LocalScript**
+4. Copy and paste the entire script code
+5. Make sure you have a part named `Basecamp`, `SpawnLocation`, or `Base` in your workspace
 
-## 🚀 Installation
+## 🔧 Configuration
 
-1. Open your Roblox game in Roblox Studio
-2. Log in  **StarterGui** in Explorer
-3. Insert → **LocalScript**
-4. Copy-paste the script from `basecamp_reset.lua`
-5. Make sure there is a spawn/basecamp part in the workspace with one of the following names:
+### Basecamp Detection
+The script automatically searches for these part names in order:
 - `Basecamp`
 - `SpawnLocation`
 - `Base`
-6. Test in game by pressing Play
 
-## 🎯 How to Use
-
-### PC Users
-- **Click the ⌂** button in the top right corner
-
-### Mobile Users
-- **Tap the ⌂** button in the top right corner to reset
-
-## ⚙️ Customization
-
-### Changing Button Color
-Find the following line and change the RGB color:
+To customize, edit line 21:
 ```lua
-toggleButton.BackgroundColor3 = Color3.fromRGB(59, 89, 152) -- Change the number  RGB
+local basecamp = workspace:FindFirstChild("YourBasecampName")
 ```
 
-**Example colors:**
-- Red: `Color3.fromRGB(255, 0, 0)`
-- Green: `Color3.fromRGB(0, 255, 0)`
-- Gold: `Color3.fromRGB(255, 215, 0)`
+### Button Size
+- **Mobile**: 32x32 pixels
+- **PC**: 36x36 pixels
 
-### Changing Icons/Emojis
-Replace characters in the text:
-```lua
-toggleButton.Text = "⌂" -- Replace with ↻, 🏠, ⬆️, or other characters
-```
-
-### Changing Basecamp Name
-Adjust to the name of the spawn part in your game:
-```lua
-local basecamp = workspace:FindFirstChild("Basecamp") -- Change "Basecamp"
-```
-
-### Changing Button Position
-Edit the position parameter:
-```lua
-local buttonPosition =  UDim2.new(1, -42, 0, -2)
--- (-42 = distance from right, -2 = distance from top/bottom)
-```
-
-### Changing Button Size
+Adjust on lines 46-48:
 ```lua
 local buttonSizeX = isMobile and 32 or 36
 local buttonSizeY = isMobile and 32 or 36
--- Mobile: 32x32 | PC: 36x36
 ```
 
-## 📱 Responsiveness
-
-This script automatically detects the player's device:
-
-| Device | Button Size | Icon Size | Position |
-|--------|--------------|-----------|----------|
-| Mobile | 32 × 32 px | 18 pt | Top Right Corner |
-| PC | 36 × 36 px | 20 pt |  Top Right Corner |
-
- ## 🎨 UI Features
-
-- **Hover Effect** - Button changes color to a brighter color when hovered
-- **Click Animation** - Button scales down by 85% and scales up when clicked
-- **Stroke Border** - Border with a modern blue color
-- **Corner Radius** - Rounded corners (10px) for a smooth appearance
-- **Notification** - Welcome message when the player spawns
-- **Smooth Transitions** - All animations use the Tween service
-
-## 📂 File Structure
-
-```
-roblox-basecamp-reset/
-├── basecamp_reset.lua # Main script
-└── README.md # Documentation
+### Button Position
+Currently positioned at top-right corner. Modify line 50:
+```lua
+local buttonPosition = UDim2.new(1, -42, 0, -2)
 ```
 
-## 🐛 Troubleshooting
+### Colors
+- **Button Color**: RGB(59, 89, 152) - Elegant Blue
+- **Hover Color**: RGB(79, 109, 172) - Light Blue
+- **Border Color**: RGB(100, 150, 220) - Sky Blue
 
-**Button not appearing?**
-- Make sure the script is LocalScript in StarterGUI
-- Check the Studio Output Console for error messages
+Customize on lines 60 and 72-84.
 
-**Reset not working?**
-- Make sure there is a basecamp part in  Workspace
-- Change the name "Basecamp" to match the name of your spawn section in the basecamp detection line.
+## 🎨 UI Customization
 
-Button too big/small?**
-- Edit the `buttonSizeX` and `buttonSizeY` variables according to your preferences.
+### Change Button Icon
+Replace the home icon (⌂) on line 66:
+```lua
+toggleButton.Text = "⌂"  -- Change to any emoji or text
+```
 
-R keyboard not working on PC?**
-- Make sure no TextBox or other input handlers are active.
-- Check if any other scripts are overriding input.
+### Notification Duration
+Default: 4 seconds. Change on line 149:
+```lua
+showNotification("Your message here", 4)
+```
 
-Toggle Button covered by other UI elements.**
-- Change the `buttonPosition` parameter to change the button position.
+## 📋 Requirements
 
-## 💡 Tips & Best Practices
+- Roblox Studio
+- LocalScript in StarterGui
+- A designated basecamp/spawn part in workspace
+- No external dependencies
 
-- **Test before publishing** - Test the script in the studio before publishing the game.
-- **Adjust colors** - Choose colors that match your game's theme.
-- **Don't make the size too large.** - To avoid disrupting gameplay and other interactions.
-- **Keyboard shortcuts** - Use rarely used keys to avoid conflicts.
-- **Mobile optimization** - Test on various mobile screen sizes.
+## 🚀 How It Works
 
-## 📝 License
+1. **Platform Detection**: Automatically detects if player is on Mobile or PC
+2. **Character Check**: Verifies character and HumanoidRootPart exist
+3. **Basecamp Search**: Finds the basecamp part in workspace
+4. **Teleportation**: Moves character 3 studs above basecamp position
+5. **Feedback**: Shows visual notification of successful reset
 
-Free to use and modify for your Roblox games.
+## 🎯 Usage
 
-##  👨‍💻 Author
+### For Players
+- **PC**: Click the ⌂ button in the top-right corner
+- **Mobile**: Tap the ⌂ button in the top-right corner
 
-Made with ❤️ for the Roblox Developer community
+### For Developers
+```lua
+-- Call reset function directly
+resetToBasecamp()
+```
+
+## ⚠️ Troubleshooting
+
+### Button Not Appearing
+- Ensure script is in **StarterGui**
+- Check if it's a **LocalScript** (not Script)
+- Wait for character to fully load
+
+### Teleport Not Working
+- Verify basecamp part exists in workspace
+- Check part name matches: `Basecamp`, `SpawnLocation`, or `Base`
+- Ensure character has `HumanoidRootPart`
+
+### Mobile Issues
+- Check if `TouchEnabled` is properly detected
+- Verify button size is appropriate for mobile screens
+
+## 🔄 Version History
+
+### v1.1.0 (Current)
+- ✅ Removed keyboard shortcut functionality
+- ✅ Button-only control to prevent accidental resets
+- ✅ Updated notification text
+- ✅ Improved cross-platform consistency
+
+### v1.0.0
+- 🎉 Initial release
+- ✨ Basic reset functionality
+- 🎨 Modern UI design
+- 📱 Mobile support
 
 ## 🤝 Contributing
 
-If you have any suggestions or improvements, please create an issue or pull request!
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is open source and available under the [MIT License](LICENSE).
+
+## 👨‍💻 Author
+
+Created with ❤️ for the Roblox development community
+
+## 🌟 Show Your Support
+
+Give a ⭐️ if this project helped you!
+
+## 📞 Support
+
+If you have any questions or need help, please open an issue on GitHub.
 
 ---
 
-**⭐ If this helps, please star it! Thanks!**
-
-**Made with ❤️ for Roblox Developers**
+**Note**: This script is designed for Roblox games and requires Roblox Studio to implement.
