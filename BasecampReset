@@ -127,18 +127,6 @@ toggleButton.TouchTap:Connect(function()
     resetToBasecamp()
 end)
 
--- ===== KEYBOARD SHORTCUT (Optional) =====
-local function onKeyPress(input, gameProcessed)
-    if gameProcessed then return end
-    
-    -- R untuk reset (gampang diingat)
-    if input.KeyCode == Enum.KeyCode.R then
-        resetToBasecamp()
-    end
-end
-
-UserInputService.InputBegan:Connect(onKeyPress)
-
 -- ===== NOTIFICATION FUNCTION =====
 local function showNotification(text, duration)
     local label = Instance.new("TextLabel")
@@ -168,8 +156,9 @@ local function showNotification(text, duration)
 end
 
 -- Tampilkan notif saat spawn
-showNotification("Tekan R atau klik ⌂ untuk kembali ke basecamp", 4)
+showNotification("Klik tombol ⌂ untuk kembali ke basecamp", 4)
 
 print("✓ Basecamp Reset Script Loaded!")
 print("✓ Toggle Button Size - Mobile: 32x32, PC: 36x36")
 print("✓ Button Position - Pojok Kanan Atas Mentok")
+print("✓ Keyboard shortcut disabled - Button only!")
