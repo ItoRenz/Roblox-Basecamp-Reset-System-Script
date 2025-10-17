@@ -1,0 +1,48 @@
+-- ===== SERVER SCRIPT (ServerScriptService > Script) =====
+-- Letakkan script ini sebagai Script (bukan LocalScript) di ServerScriptService
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+
+-- ===== CREATE OR GET REMOTE EVENT =====
+local resetEvent = ReplicatedStorage:FindFirstChild("ResetCheckpointEvent")
+if not resetEvent then
+    resetEvent = Instance.new("RemoteEvent")
+    resetEvent.Name = "ResetCheckpointEvent"
+    resetEvent.Parent = ReplicatedStorage
+end
+
+-- ===== HANDLE RESET EVENT =====
+resetEvent.OnServerEvent:Connect(function(player, action)
+    if action == "ResetCheckpoint" then
+        local leaderstats = player:FindFirstChild("leaderstats")
+        if leaderstats then
+            -- Reset Checkpoint ke 0
+            local checkpoint = leaderstats:FindFirstChild("Checkpoint") 
+                or leaderstats:FindFirstChild("CheckPoint")
+                or leaderstats:FindFirstChild("checkpoint")
+                or leaderstats:FindFirstChild("CHECKPOINT")
+            
+            if checkpoint and checkpoint:IsA("IntValue") then
+                checkpoint.Value = 0
+                print("✓ ["..player.Name.."] Checkpoint direset ke 0 (SERVER)")
+            end
+            
+            -- Summit tetap tersimpan
+            local summit = leaderstats:FindFirstChild("Summit")
+                or leaderstats:FindFirstChild("summit") 
+                or leaderstats:FindFirstChild("SUMMIT")
+            
+            if summit and summit:IsA("IntValue") then
+                print("ℹ️ ["..player.Name.."] Summit tetap: "..summit.Value.." (tidak direset)")
+            end
+        end
+        
+        -- Reset RespawnLocation
+        player.RespawnLocation = nil
+        print("✓ ["..player.Name.."] RespawnLocation direset")
+    end
+end)
+
+print("✓ Checkpoint Reset Server Event Active!")
+print("✓ Listening for reset commands from clients...")
