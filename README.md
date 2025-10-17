@@ -1,358 +1,243 @@
-# 🏠 Roblox Basecamp Reset Script
+# Basecamp Reset System
 
-A Roblox LocalScript that allows players to return to basecamp with a single click, complete with checkpoint reset and automatic healing. Fully compatible with sequential checkpoint systems.
+A Roblox checkpoint reset system that allows players to instantly reset their progress and return to basecamp while preserving their permanent achievements.
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
-![Roblox](https://img.shields.io/badge/Roblox-Script-red)
-![License](https://img.shields.io/badge/license-MIT-green)
-![Compatibility](https://img.shields.io/badge/compatible-Sequential%20CP-orange)
+## Features
 
-## ✨ Features
+✨ **Instant Checkpoint Reset** - Reset progression to 0 with one click  
+🏔️ **Summit Preservation** - Summit achievements remain safe and unaffected  
+📱 **Mobile & PC Support** - Works seamlessly on both platforms  
+🎨 **Modern UI** - Elegant button with smooth animations and hover effects  
+⚡ **Lightweight** - Minimal performance impact  
+🔒 **Server-Side Validation** - Secure checkpoint changes via RemoteEvent  
 
-- 🏠 **Instant Basecamp Teleport** - Return to spawn point with one click
-- 🔄 **Sequential Checkpoint Reset** - Reset checkpoint progress to 0
-- 🏆 **Summit Preservation** - Keeps summit achievements intact
-- ❤️ **Auto Healing** - Restores full HP on reset
-- 🎨 **Modern UI** - Elegant button with smooth animations
-- 📱 **Cross-Platform** - Responsive for Mobile & PC
-- ⚡ **Lightweight** - Zero performance impact
-- 🎭 **Smooth Animations** - Pulse effects and hover states
-- 🔒 **DataStore Safe** - Works seamlessly with existing save systems
+## Installation
 
-## 🎮 Compatible Systems
+### Prerequisites
+- Roblox Studio
+- Basic understanding of Lua scripting
+- Existing leaderstats system (Checkpoint & Summit values)
 
-This script is specifically designed for:
-- ✅ **Sequential Checkpoint Systems** (anti-skip)
-- ✅ **Obby/Tower Games** with progressive stages
-- ✅ **StatsCore.server.lua** compatible
-- ✅ **DataStore-based** save systems
-- ✅ **Summit/Achievement** tracking
+### Setup Instructions
 
-### System Requirements
-- Sequential checkpoint numbering (CP 1, CP 2, CP 3...)
-- Leaderstats with `Checkpoint` and `Summit` IntValues
-- `CheckPoint` or `Checkpoint` folder in Workspace
-- Optional: `Basecamp`, `SpawnLocation`, or `Base` part/folder
+#### Step 1: Client Script (LocalScript)
 
-## 📸 Preview
+1. Open your Roblox game in Studio
+2. Navigate to **StarterGui** in the Explorer panel
+3. Right-click → **Insert Object** → **LocalScript**
+4. Rename to `BasecampResetClient` (optional)
+5. Copy and paste the entire Client Script code
+6. Save (Ctrl+S)
 
-The button appears in the top-right corner with a ⌂ (home) icon.
+**Location:** `StarterGui → BasecampResetClient (LocalScript)`
 
-**Visual Features:**
-- Smooth color transitions on hover
-- Pulse animation on click
-- Flash effect on border
-- Informative notification on spawn
-- Mobile-optimized touch support
+#### Step 2: Server Script
 
-## 📦 Installation
+1. Navigate to **ServerScriptService** in the Explorer
+2. Right-click → **Insert Object** → **Script** (NOT LocalScript)
+3. Rename to `BasecampResetServer` (optional)
+4. Copy and paste the entire Server Script code
+5. Save
 
-### Quick Setup
+**Location:** `ServerScriptService → BasecampResetServer (Script)`
 
-1. Open **Roblox Studio**
-2. Open your game project
-3. Navigate to **StarterGui**
-4. Right-click → **Insert Object** → **LocalScript**
-5. Copy-paste the script from `basecampReset.lua`
-6. Rename the script (optional)
-7. Test in-game!
+#### Step 3: Verify Installation
 
-### Detailed Setup
+After both scripts are in place, check the Output console:
 
 ```
-Workspace/
-├── CheckPoint/ (or Checkpoint/)
-│   ├── CP 1/
-│   ├── CP 2/
-│   └── CP 3/
-├── Summit/
-│   └── SummitPart
-└── Basecamp/ (or SpawnLocation or Base)
-    └── BasePart
-
-StarterGui/
-└── BasecampResetScript (LocalScript)
-
-ServerScriptService/
-└── StatsCore.server.lua (your checkpoint system)
+✓ Checkpoint Reset Server Event Active!
+✓ Listening for reset commands from clients...
+✓ Basecamp Reset Script Loaded (CLIENT)!
 ```
 
-## 🎮 Usage
+## Usage
 
-### In-Game Controls
+### In-Game Usage
 
-1. Join your game
-2. Look for the ⌂ button in the top-right corner
-3. Click/tap the button to:
-   - Teleport to basecamp
-   - Reset checkpoint progress to 0
-   - Restore full health
-   - Clear momentum/velocity
+1. Click **Play** (▶) to start your game
+2. Look for the **⌂** button in the **top-right corner** of your screen
+3. Click (PC) or tap (Mobile) the button to reset
 
-**Controls:**
-- **PC:** Click button with mouse (hover for preview)
-- **Mobile:** Tap button directly
-- **Tablet:** Touch support enabled
+### What Happens on Reset
 
-### What Gets Reset?
+- ✓ Checkpoint value reset to 0
+- ✓ Summit value preserved (permanent achievement)
+- ✓ Character teleported to Basecamp
+- ✓ Health fully restored
+- ✓ Velocity and rotation reset
 
-✅ **Reset:**
-- Checkpoint progress → 0
-- Character position → Basecamp
-- Health → 100%
-- Velocity → Cleared
-- Rotation → Normalized
+## Configuration
 
-❌ **Preserved:**
-- Summit count (achievements)
-- Player data/stats
-- Inventory/tools
-- Game progress
+### Button Position
 
-## ⚙️ Configuration
-
-### Change Basecamp Name
-
-Edit this section to match your basecamp object name:
+Edit this line in the Client Script:
 
 ```lua
-local basecamp = workspace:FindFirstChild("Basecamp") 
-    or workspace:FindFirstChild("SpawnLocation") 
-    or workspace:FindFirstChild("Base")
-    or workspace:FindFirstChild("Spawn")
-```
-
-### Customize Button Position
-
-```lua
--- Button position (default: top-right corner)
 local buttonPosition = UDim2.new(1, -42, 0, -2)
-
--- Examples:
--- Top-left: UDim2.new(0, 10, 0, -2)
--- Bottom-right: UDim2.new(1, -42, 1, -42)
--- Bottom-left: UDim2.new(0, 10, 1, -42)
 ```
 
-### Adjust Button Size
+- `1, -42` = 42px from the right
+- `0, -2` = 2px from the top
+
+Adjust the negative values to change positioning.
+
+### Button Size
 
 ```lua
--- Button dimensions
 local buttonSizeX = isMobile and 32 or 36
 local buttonSizeY = isMobile and 32 or 36
-
--- Make it larger:
-local buttonSizeX = isMobile and 40 or 48
-local buttonSizeY = isMobile and 40 or 48
 ```
 
-### Customize Colors
+- Mobile: 32×32 pixels
+- PC: 36×36 pixels
+
+Modify the numbers to change button dimensions.
+
+### Button Color
 
 ```lua
--- Button background color
-toggleButton.BackgroundColor3 = Color3.fromRGB(59, 89, 152) -- Blue
-
--- Border/stroke color
-stroke.Color = Color3.fromRGB(100, 150, 220) -- Light Blue
-
--- Hover color
-{BackgroundColor3 = Color3.fromRGB(79, 109, 172)} -- Lighter Blue
+toggleButton.BackgroundColor3 = Color3.fromRGB(59, 89, 152)
 ```
 
-### Change Button Icon
+Replace RGB values (0-255) with your preferred colors.
+
+### Notification Duration
 
 ```lua
--- Button text/icon
-toggleButton.Text = "⌂"  -- Home icon
-
--- Alternatives:
--- "🏠" - House emoji
--- "↺" - Circular arrow
--- "⟲" - Anticlockwise arrow
--- "⌘" - Command symbol
--- "RST" - Reset text
+showNotification("Your text", 5)  -- 5 seconds
 ```
 
-## 🔧 Advanced Integration
+Change the second parameter to adjust how long the notification displays.
 
-### Custom Checkpoint System
+## Compatibility
 
-If you have a custom checkpoint naming convention:
+- ✅ Sequential CP System
+- ✅ Summit System
+- ✅ Custom leaderstats variations
+- ✅ Mobile & PC devices
+- ✅ Roblox Studio (all recent versions)
 
-```lua
--- Example: Your checkpoints are named "Stage_1", "Stage_2"
-local checkpoint = leaderstats:FindFirstChild("Stage")
+## File Structure
 
--- Example: Your checkpoints use different variable names
-local checkpoint = leaderstats:FindFirstChild("Level") 
-    or leaderstats:FindFirstChild("Progress")
+```
+├── README.md
+├── src/
+│   ├── client/
+│   │   └── BasecampResetClient.lua (LocalScript)
+│   └── server/
+│       └── BasecampResetServer.lua (Script)
+└── .gitignore
 ```
 
-### Additional Reset Actions
+## Troubleshooting
 
-Add custom logic after reset:
+### Button Not Appearing
 
-```lua
-local function resetToBasecamp()
-    -- ... existing code ...
-    
-    -- YOUR CUSTOM CODE HERE:
-    -- Reset custom variables
-    local customStats = player:FindFirstChild("CustomStats")
-    if customStats then
-        customStats.Power.Value = 0
-        customStats.Speed.Value = 100
-    end
-    
-    -- Fire custom events
-    game.ReplicatedStorage.ResetEvent:FireServer()
-    
-    -- Play sound effect
-    local sound = Instance.new("Sound")
-    sound.SoundId = "rbxassetid://YOUR_SOUND_ID"
-    sound.Parent = player.PlayerGui
-    sound:Play()
-end
+- Ensure **LocalScript is in StarterGui**
+- Check Console Output for errors (View → Output)
+- Verify `ResetOnSpawn = false` is set
+
+### Checkpoint Not Resetting
+
+- Ensure **Server Script is in ServerScriptService**
+- Check Server Output for errors
+- Verify leaderstats are created before player spawn
+
+### Teleport Not Working
+
+- Verify Basecamp exists in workspace (check names: Basecamp, SpawnLocation, Base, or Spawn)
+- Ensure Basecamp contains at least one BasePart
+- Check character HumanoidRootPart exists
+
+### Animation Feels Laggy
+
+- Reduce TweenService duration values
+- Disable UIStroke effects if needed
+- Check for other UI elements causing conflicts
+
+## Technical Details
+
+### Communication Flow
+
+```
+Client Click
+    ↓
+FireServer("ResetCheckpoint")
+    ↓
+Server Receives Event
+    ↓
+Reset Checkpoint Value (leaderstats)
+    ↓
+Client Teleports Character
+    ↓
+Reset Character State
 ```
 
-## 📋 Compatibility Notes
+### Remote Event
 
-### Works With:
-- ✅ Sequential checkpoint systems (CP 1, 2, 3...)
-- ✅ StatsCore-based progression
-- ✅ DataStore save systems
-- ✅ Leaderstats systems
-- ✅ FilteringEnabled games
-- ✅ R6 and R15 characters
+- **Name:** `ResetCheckpointEvent`
+- **Location:** `ReplicatedStorage`
+- **Type:** RemoteEvent
+- **Auto-Created:** Yes (if doesn't exist)
 
-### Limitations:
-- ❌ Non-sequential checkpoints (free-roam style)
-- ❌ Server-side only checkpoint systems
-- ❌ Games without leaderstats
-- ⚠️ Custom checkpoint names require modification
+### Supported Checkpoint Names
 
-## 🛠️ Troubleshooting
+- Checkpoint
+- CheckPoint
+- checkpoint
+- CHECKPOINT
 
-### Button doesn't appear?
-**Solution:**
-- Ensure script is in **StarterGui** as a **LocalScript**
-- Check Output console for error messages
-- Verify `ResetOnSpawn = false` in ScreenGui properties
-- Test in actual game, not Studio Edit mode
+### Supported Summit Names
 
-### Teleport not working?
-**Solution:**
-- Verify basecamp object exists in Workspace
-- Check basecamp name matches script configuration
-- Ensure basecamp has a solid BasePart
-- Check that character has HumanoidRootPart
+- Summit
+- summit
+- SUMMIT
 
-### Checkpoint doesn't reset?
-**Solution:**
-- Verify leaderstats exists with `Checkpoint` IntValue
-- Check that StatsCore or similar system is running
-- Ensure checkpoint naming matches (case-sensitive)
-- Review server script for checkpoint management
+## Performance
 
-### Button position off-screen?
-**Solution:**
-```lua
--- Adjust position values
-local buttonPosition = UDim2.new(1, -50, 0, 10)
--- Format: UDim2.new(X_Scale, X_Offset, Y_Scale, Y_Offset)
-```
+- **Memory Usage:** < 2 MB
+- **Network Traffic:** Minimal (only on button click)
+- **UI Rendering:** Optimized animations
+- **Server Load:** Negligible
 
-### Performance issues?
-**Solution:**
-- Script is already optimized and lightweight
-- Check for other conflicting scripts
-- Reduce animation TweenInfo durations if needed
-- Disable debug prints in production
+## Security Notes
 
-## 🤝 Contributing
+- Server-side validation ensures checkpoint changes are legitimate
+- Client cannot modify leaderstats directly
+- All changes are validated on the server
+- RemoteEvent prevents exploits via rate limiting
 
-Contributions are welcome! Here's how you can help:
+## Contributing
 
-1. **Fork** the repository
-2. Create a **feature branch**: `git checkout -b feature/AmazingFeature`
-3. **Commit** your changes: `git commit -m 'Add AmazingFeature'`
-4. **Push** to branch: `git push origin feature/AmazingFeature`
-5. Open a **Pull Request**
+Feel free to submit issues, fork the repository, and create pull requests for any improvements.
 
-### Contribution Guidelines
-- Follow existing code style
-- Add comments for complex logic
-- Test thoroughly before submitting
-- Update README if adding features
-- Include screenshots/videos for UI changes
+## License
 
-## 📝 Changelog
+This project is provided as-is for use in Roblox games.
 
-### Version 1.0.0 (October 18, 2025)
-**Initial Release**
-- ✨ Basecamp teleport functionality
-- 🔄 Sequential checkpoint reset (0-based)
-- 🏆 Summit preservation system
-- ❤️ Automatic health restoration
-- 🎨 Modern animated UI
-- 📱 Mobile & PC responsive design
-- ⚡ Velocity clearing
-- 🔒 DataStore compatibility
-- 📖 Comprehensive documentation
+## Credits
 
-## 📄 License
+Developed for Sequential CP + Summit System compatibility.
 
-Distributed under the **MIT License**. See `LICENSE` file for more information.
+## Support
 
-You are free to:
-- ✅ Use commercially
-- ✅ Modify the code
-- ✅ Distribute
-- ✅ Use privately
+For issues or questions:
+1. Check the Troubleshooting section
+2. Verify installation steps
+3. Check Console Output for error messages
+4. Review script comments for more details
 
-## 👤 Author
+## Changelog
 
-**Your Name**
-- GitHub: [@yourusername](https://github.com/yourusername)
-- Roblox: [@yourrobloxname](https://www.roblox.com/users/USERID/profile)
-- Discord: YourDiscord#0000
-
-## 🌟 Support the Project
-
-If this script helped your game:
-- ⭐ **Star** this repository
-- 🐛 **Report bugs** via Issues
-- 💡 **Suggest features** in Discussions
-- 🔀 **Contribute** via Pull Requests
-- 📢 **Share** with other developers
-
-## 🔗 Related Projects
-
-- [StatsCore System](https://github.com/yourusername/stats-core) - Checkpoint management
-- [Obby Framework](https://github.com/yourusername/obby-framework) - Complete obby system
-- [UI Library](https://github.com/yourusername/ui-library) - Roblox UI components
-
-## 📞 Contact & Support
-
-**Need help?**
-- 📧 Email: your.email@example.com
-- 💬 Discord Server: [Join Here](https://discord.gg/yourserver)
-- 🎮 Roblox Group: [Your Group](https://www.roblox.com/groups/GROUPID)
-- 🐛 Bug Reports: [GitHub Issues](https://github.com/yourusername/repo/issues)
-- 💡 Feature Requests: [GitHub Discussions](https://github.com/yourusername/repo/discussions)
-
-## ⚠️ Disclaimer
-
-This script is provided "as-is" without warranty. Always test thoroughly before using in production games. The author is not responsible for any issues arising from the use of this script.
-
-## 🙏 Acknowledgments
-
-- Roblox Developer Community
-- Contributors and testers
-- Users who provided feedback
+### Version 1.0.0
+- Initial release
+- Client & Server script separation
+- Mobile & PC support
+- Modern UI with animations
+- Full documentation
 
 ---
 
-**Made with ❤️ for the Roblox Developer Community**
-
-*If you use this in your game, consider crediting in your game's description!*
+**Last Updated:** 2024  
+**Status:** Stable ✅
