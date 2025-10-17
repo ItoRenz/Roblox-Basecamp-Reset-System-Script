@@ -3,11 +3,9 @@
 
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
 
 local player = Players.LocalPlayer
 local mouse = player:GetMouse()
-local screenSize = player:WaitForChild("PlayerGui").AbsoluteSize
 
 -- Detect apakah player menggunakan mobile atau PC
 local isMobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
@@ -16,30 +14,37 @@ local isMobile = UserInputService.TouchEnabled and not UserInputService.Keyboard
 local function resetToBasecamp()
     local character = player.Character
     if not character or not character:FindFirstChild("HumanoidRootPart") then
+        warn("⚠️ Character tidak ditemukan atau HumanoidRootPart hilang")
         return
     end
     
     -- Cari basecamp (sesuaikan nama sesuai game kamu)
     local basecamp = workspace:FindFirstChild("Basecamp") or workspace:FindFirstChild("SpawnLocation") or workspace:FindFirstChild("Base")
     
-    if basecamp and basecamp:FindFirstChild("PrimaryPart") or basecamp:IsA("Part") then
+    if basecamp then
         local spawnPos = basecamp.Position + Vector3.new(0, 3, 0) -- 3 stud di atas basecamp
         character:MoveTo(spawnPos)
+        print("✓ Reset ke basecamp berhasil!")
     else
         -- Jika tidak ada basecamp, teleport ke 0,0,0
         character:MoveTo(Vector3.new(0, 50, 0))
+        warn("⚠️ Basecamp tidak ditemukan, spawn di default location")
     end
 end
 
 -- ===== CREATE GUI =====
+local playerGui = player:WaitForChild("PlayerGui")
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "BasecampResetGui"
 screenGui.ResetOnSpawn = false
-screenGui.Parent = player:WaitForChild("PlayerGui")
+screenGui.Parent = playerGui
 
--- Tentukan ukuran button berdasarkan device
-local buttonSize = isMobile and UDim2.new(0, 50, 0, 50) or UDim2.new(0, 60, 0, 60)
-local buttonPosition = UDim2.new(1, -75, 0, 15)
+-- Tentukan ukuran button yang lebih kecil - Mobile: 32x32, PC: 36x36
+local buttonSizeX = isMobile and 32 or 36
+local buttonSizeY = isMobile and 32 or 36
+local buttonSize = UDim2.new(0, buttonSizeX, 0, buttonSizeY)
+-- Posisi di pojok kanan atas mepet layar (mentok atas)
+local buttonPosition = UDim2.new(1, -42, 0, -2)
 
 -- Main Button (Toggle Style)
 local toggleButton = Instance.new("TextButton")
@@ -50,57 +55,71 @@ toggleButton.BackgroundColor3 = Color3.fromRGB(59, 89, 152) -- Biru elegan
 toggleButton.BackgroundTransparency = 0.1
 toggleButton.BorderSizePixel = 0
 toggleButton.Font = Enum.Font.GothamBold
-toggleButton.TextSize = isMobile and 22 or 26
+toggleButton.TextSize = isMobile and 18 or 20
 toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 toggleButton.Text = "⌂"  -- Home icon
 toggleButton.Parent = screenGui
 
 -- Corner radius (modern look)
 local corner = Instance.new("UICorner")
-corner.CornerRadius = UDim.new(0, 12)
+corner.CornerRadius = UDim.new(0, 10)
 corner.Parent = toggleButton
 
 -- Stroke untuk border yang lebih menarik
 local stroke = Instance.new("UIStroke")
 stroke.Color = Color3.fromRGB(100, 150, 220)
-stroke.Thickness = 2
+stroke.Thickness = 1.5
 stroke.Parent = toggleButton
 
 -- Hover effect
-local isHovering = false
-
 toggleButton.MouseEnter:Connect(function()
-    isHovering = true
-    game:GetService("TweenService"):Create(
+    local tweenService = game:GetService("TweenService")
+    
+    -- Change color
+    local tweenInfo = TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    tweenService:Create(
         toggleButton,
-        TweenInfo.new(0.2),
+        tweenInfo,
         {BackgroundColor3 = Color3.fromRGB(79, 109, 172)}
     ):Play()
+    
+    -- Change stroke color
     stroke.Color = Color3.fromRGB(150, 200, 255)
 end)
 
 toggleButton.MouseLeave:Connect(function()
-    isHovering = false
-    game:GetService("TweenService"):Create(
+    local tweenService = game:GetService("TweenService")
+    
+    -- Reset color
+    local tweenInfo = TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    tweenService:Create(
         toggleButton,
-        TweenInfo.new(0.2),
+        tweenInfo,
         {BackgroundColor3 = Color3.fromRGB(59, 89, 152)}
     ):Play()
+    
+    -- Reset stroke color
     stroke.Color = Color3.fromRGB(100, 150, 220)
 end)
 
 -- Click animation dan function
 toggleButton.MouseButton1Click:Connect(function()
-    -- Scale down effect
     local tweenService = game:GetService("TweenService")
-    tweenService:Create(toggleButton, TweenInfo.new(0.1), {Size = buttonSize * 0.9}):Play()
+    
+    -- Scale down effect
+    local scaledDownSize = UDim2.new(0, buttonSizeX * 0.85, 0, buttonSizeY * 0.85)
+    local scaleDownInfo = TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+    local scaleDown = tweenService:Create(toggleButton, scaleDownInfo, {Size = scaledDownSize})
+    scaleDown:Play()
     
     -- Reset to basecamp
     resetToBasecamp()
     
     -- Scale up effect
-    wait(0.1)
-    tweenService:Create(toggleButton, TweenInfo.new(0.1), {Size = buttonSize}):Play()
+    scaleDown.Completed:Connect(function()
+        local scaleUpInfo = TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+        tweenService:Create(toggleButton, scaleUpInfo, {Size = buttonSize}):Play()
+    end)
 end)
 
 -- Touch support untuk mobile
@@ -124,19 +143,25 @@ UserInputService.InputBegan:Connect(onKeyPress)
 local function showNotification(text, duration)
     local label = Instance.new("TextLabel")
     label.Name = "ResetNotification"
-    label.Size = UDim2.new(0, 250, 0, 50)
-    label.Position = UDim2.new(1, -270, 0, 85)
+    label.Size = UDim2.new(0, 220, 0, 45)
+    label.Position = UDim2.new(1, -240, 0, 55)
     label.BackgroundColor3 = Color3.fromRGB(59, 89, 152)
-    label.BackgroundTransparency = 0.2
+    label.BackgroundTransparency = 0.15
     label.TextColor3 = Color3.fromRGB(255, 255, 255)
-    label.TextSize = 14
+    label.TextSize = 12
     label.Font = Enum.Font.Gotham
     label.Text = text
+    label.TextWrapped = true
     label.Parent = screenGui
     
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 8)
-    corner.Parent = label
+    local labelCorner = Instance.new("UICorner")
+    labelCorner.CornerRadius = UDim.new(0, 8)
+    labelCorner.Parent = label
+    
+    local labelStroke = Instance.new("UIStroke")
+    labelStroke.Color = Color3.fromRGB(100, 150, 220)
+    labelStroke.Thickness = 1
+    labelStroke.Parent = label
     
     wait(duration or 3)
     label:Destroy()
@@ -146,3 +171,5 @@ end
 showNotification("Tekan R atau klik ⌂ untuk kembali ke basecamp", 4)
 
 print("✓ Basecamp Reset Script Loaded!")
+print("✓ Toggle Button Size - Mobile: 32x32, PC: 36x36")
+print("✓ Button Position - Pojok Kanan Atas Mentok")
