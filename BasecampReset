@@ -11,6 +11,38 @@ local mouse = player:GetMouse()
 -- Detect apakah player menggunakan mobile atau PC
 local isMobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
 
+-- ===== CHECKPOINT RESET FUNCTION =====
+local function resetCheckpoint()
+    local character = player.Character
+    if not character then return end
+    
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        -- Reset respawn location ke default spawn
+        local basecamp = workspace:FindFirstChild("Basecamp") or workspace:FindFirstChild("SpawnLocation") or workspace:FindFirstChild("Base")
+        
+        if basecamp and basecamp:IsA("SpawnLocation") then
+            -- Set respawn location ke basecamp
+            player.RespawnLocation = basecamp
+            print("✓ Checkpoint direset ke Basecamp")
+        else
+            -- Clear respawn location (kembali ke default game spawn)
+            player.RespawnLocation = nil
+            print("✓ Checkpoint direset ke Default Spawn")
+        end
+        
+        -- Hapus checkpoint yang tersimpan di leaderstats (jika ada)
+        local leaderstats = player:FindFirstChild("leaderstats")
+        if leaderstats then
+            local stage = leaderstats:FindFirstChild("Stage")
+            if stage and stage:IsA("IntValue") then
+                stage.Value = 0
+                print("✓ Stage checkpoint direset")
+            end
+        end
+    end
+end
+
 -- ===== BASECAMP RESET FUNCTION =====
 local function resetToBasecamp()
     local character = player.Character
@@ -18,6 +50,9 @@ local function resetToBasecamp()
         warn("⚠️ Character tidak ditemukan atau HumanoidRootPart hilang")
         return
     end
+    
+    -- Reset checkpoint terlebih dahulu
+    resetCheckpoint()
     
     -- Cari basecamp (sesuaikan nama sesuai game kamu)
     local basecamp = workspace:FindFirstChild("Basecamp") or workspace:FindFirstChild("SpawnLocation") or workspace:FindFirstChild("Base")
@@ -30,6 +65,19 @@ local function resetToBasecamp()
         -- Jika tidak ada basecamp, teleport ke 0,0,0
         character:MoveTo(Vector3.new(0, 50, 0))
         warn("⚠️ Basecamp tidak ditemukan, spawn di default location")
+    end
+    
+    -- Reset velocity dan rotation
+    local hrp = character.HumanoidRootPart
+    if hrp then
+        hrp.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+        hrp.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+    end
+    
+    -- Heal character
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        humanoid.Health = humanoid.MaxHealth
     end
 end
 
@@ -180,9 +228,10 @@ local function showNotification(text, duration)
 end
 
 -- Tampilkan notif saat spawn
-showNotification("Klik tombol ⌂ untuk kembali ke basecamp", 4)
+showNotification("Klik tombol ⌂ untuk kembali ke basecamp\n+ Reset checkpoint", 4)
 
 print("✓ Basecamp Reset Script Loaded!")
 print("✓ Toggle Button Size - Mobile: 32x32, PC: 36x36")
 print("✓ Button Position - Pojok Kanan Atas Mentok")
 print("✓ Animasi: Pulse + Flash Effect (Ringan & Smooth)")
+print("✓ Fitur Checkpoint Reset: AKTIF")
