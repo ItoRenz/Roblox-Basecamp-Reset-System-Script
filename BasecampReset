@@ -1,5 +1,5 @@
 -- Script ini harus diletakkan di StarterGui (LocalScript)
--- Pastikan ada Part bernama "Basecamp" atau "SpawnLocation" di workspace
+-- Kompatibel dengan StatsCore.server.lua (Sequential CP + Summit System)
 
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
@@ -16,31 +16,34 @@ local function resetCheckpoint()
     local character = player.Character
     if not character then return end
     
-    local humanoid = character:FindFirstChildOfClass("Humanoid")
-    if humanoid then
-        -- Reset respawn location ke default spawn
-        local basecamp = workspace:FindFirstChild("Basecamp") or workspace:FindFirstChild("SpawnLocation") or workspace:FindFirstChild("Base")
+    -- Reset leaderstats checkpoint ke 0
+    local leaderstats = player:FindFirstChild("leaderstats")
+    if leaderstats then
+        -- Reset Checkpoint value (sesuai StatsCore system)
+        local checkpoint = leaderstats:FindFirstChild("Checkpoint") 
+            or leaderstats:FindFirstChild("CheckPoint")
+            or leaderstats:FindFirstChild("checkpoint")
+            or leaderstats:FindFirstChild("CHECKPOINT")
         
-        if basecamp and basecamp:IsA("SpawnLocation") then
-            -- Set respawn location ke basecamp
-            player.RespawnLocation = basecamp
-            print("✓ Checkpoint direset ke Basecamp")
-        else
-            -- Clear respawn location (kembali ke default game spawn)
-            player.RespawnLocation = nil
-            print("✓ Checkpoint direset ke Default Spawn")
+        if checkpoint and checkpoint:IsA("IntValue") then
+            checkpoint.Value = 0
+            print("✓ Checkpoint direset ke 0 (Sequential CP System)")
         end
         
-        -- Hapus checkpoint yang tersimpan di leaderstats (jika ada)
-        local leaderstats = player:FindFirstChild("leaderstats")
-        if leaderstats then
-            local stage = leaderstats:FindFirstChild("Stage")
-            if stage and stage:IsA("IntValue") then
-                stage.Value = 0
-                print("✓ Stage checkpoint direset")
-            end
+        -- TIDAK reset Summit value - hanya reset progress CP
+        -- Summit tetap tersimpan sebagai pencapaian permanen
+        local summit = leaderstats:FindFirstChild("Summit")
+            or leaderstats:FindFirstChild("summit") 
+            or leaderstats:FindFirstChild("SUMMIT")
+        
+        if summit and summit:IsA("IntValue") then
+            print(("ℹ️ Summit tetap: %d (tidak direset)"):format(summit.Value))
         end
     end
+    
+    -- Reset RespawnLocation ke nil (force spawn di default)
+    player.RespawnLocation = nil
+    print("✓ RespawnLocation direset")
 end
 
 -- ===== BASECAMP RESET FUNCTION =====
@@ -54,15 +57,30 @@ local function resetToBasecamp()
     -- Reset checkpoint terlebih dahulu
     resetCheckpoint()
     
-    -- Cari basecamp (sesuaikan nama sesuai game kamu)
-    local basecamp = workspace:FindFirstChild("Basecamp") or workspace:FindFirstChild("SpawnLocation") or workspace:FindFirstChild("Base")
+    -- Cari basecamp (kompatibel dengan berbagai nama)
+    local basecamp = workspace:FindFirstChild("Basecamp") 
+        or workspace:FindFirstChild("SpawnLocation") 
+        or workspace:FindFirstChild("Base")
+        or workspace:FindFirstChild("Spawn")
     
     if basecamp then
-        local spawnPos = basecamp.Position + Vector3.new(0, 3, 0) -- 3 stud di atas basecamp
-        character:MoveTo(spawnPos)
-        print("✓ Reset ke basecamp berhasil!")
+        -- Jika basecamp adalah folder/model, cari part di dalamnya
+        local spawnPart = basecamp
+        if not basecamp:IsA("BasePart") then
+            spawnPart = basecamp:FindFirstChildWhichIsA("BasePart", true)
+        end
+        
+        if spawnPart and spawnPart:IsA("BasePart") then
+            local spawnPos = spawnPart.Position + Vector3.new(0, 3, 0)
+            character:MoveTo(spawnPos)
+            print("✓ Reset ke basecamp berhasil!")
+        else
+            -- Fallback: gunakan position folder/model
+            character:MoveTo(basecamp:GetPivot().Position + Vector3.new(0, 3, 0))
+            print("✓ Reset ke basecamp berhasil (pivot)!")
+        end
     else
-        -- Jika tidak ada basecamp, teleport ke 0,0,0
+        -- Jika tidak ada basecamp, teleport ke 0,50,0
         character:MoveTo(Vector3.new(0, 50, 0))
         warn("⚠️ Basecamp tidak ditemukan, spawn di default location")
     end
@@ -72,12 +90,15 @@ local function resetToBasecamp()
     if hrp then
         hrp.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
         hrp.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+        -- Reset orientasi agar tidak terbalik
+        hrp.CFrame = CFrame.new(hrp.Position) * CFrame.Angles(0, hrp.CFrame:ToEulerAnglesYXZ(), 0)
     end
     
     -- Heal character
     local humanoid = character:FindFirstChildOfClass("Humanoid")
     if humanoid then
         humanoid.Health = humanoid.MaxHealth
+        print("✓ Health restored")
     end
 end
 
@@ -228,10 +249,11 @@ local function showNotification(text, duration)
 end
 
 -- Tampilkan notif saat spawn
-showNotification("Klik tombol ⌂ untuk kembali ke basecamp\n+ Reset checkpoint", 4)
+showNotification("⌂ Basecamp Reset Ready\n• Reset Checkpoint ke 0\n• Summit tetap tersimpan", 5)
 
 print("✓ Basecamp Reset Script Loaded!")
+print("✓ Compatible with StatsCore Sequential CP System")
+print("✓ Checkpoint reset to 0, Summit preserved")
 print("✓ Toggle Button Size - Mobile: 32x32, PC: 36x36")
 print("✓ Button Position - Pojok Kanan Atas Mentok")
 print("✓ Animasi: Pulse + Flash Effect (Ringan & Smooth)")
-print("✓ Fitur Checkpoint Reset: AKTIF")
