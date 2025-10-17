@@ -36,7 +36,6 @@ A Roblox script that allows players to easily reset all checkpoints and return t
 
 ### PC Users
 - **Click the ⌂** button in the top right corner
-- **Press the R key** on the keyboard for an instant reset
 
 ### Mobile Users
 - **Tap the ⌂** button in the top right corner to reset
