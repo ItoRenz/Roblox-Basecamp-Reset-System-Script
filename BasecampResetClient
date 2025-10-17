@@ -1,0 +1,186 @@
+-- ===== CLIENT SCRIPT (StarterGui > LocalScript) =====
+-- Letakkan script ini sebagai LocalScript di StarterGui
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local player = Players.LocalPlayer
+local mouse = player:GetMouse()
+
+-- Detect mobile or PC
+local isMobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
+
+-- ===== CREATE OR GET REMOTE EVENT =====
+local resetEvent = ReplicatedStorage:FindFirstChild("ResetCheckpointEvent")
+if not resetEvent then
+    resetEvent = Instance.new("RemoteEvent")
+    resetEvent.Name = "ResetCheckpointEvent"
+    resetEvent.Parent = ReplicatedStorage
+end
+
+-- ===== BASECAMP RESET FUNCTION (Client-side) =====
+local function resetToBasecamp()
+    local character = player.Character
+    if not character or not character:FindFirstChild("HumanoidRootPart") then
+        warn("⚠️ Character tidak ditemukan atau HumanoidRootPart hilang")
+        return
+    end
+    
+    -- PANGGIL SERVER UNTUK RESET CHECKPOINT
+    resetEvent:FireServer("ResetCheckpoint")
+    
+    -- Cari basecamp (kompatibel dengan berbagai nama)
+    local basecamp = workspace:FindFirstChild("Basecamp") 
+        or workspace:FindFirstChild("SpawnLocation") 
+        or workspace:FindFirstChild("Base")
+        or workspace:FindFirstChild("Spawn")
+    
+    if basecamp then
+        local spawnPart = basecamp
+        if not basecamp:IsA("BasePart") then
+            spawnPart = basecamp:FindFirstChildWhichIsA("BasePart", true)
+        end
+        
+        if spawnPart and spawnPart:IsA("BasePart") then
+            local spawnPos = spawnPart.Position + Vector3.new(0, 3, 0)
+            character:MoveTo(spawnPos)
+            print("✓ Reset ke basecamp berhasil!")
+        else
+            character:MoveTo(basecamp:GetPivot().Position + Vector3.new(0, 3, 0))
+            print("✓ Reset ke basecamp berhasil (pivot)!")
+        end
+    else
+        character:MoveTo(Vector3.new(0, 50, 0))
+        warn("⚠️ Basecamp tidak ditemukan, spawn di default location")
+    end
+    
+    -- Reset velocity dan rotation
+    local hrp = character.HumanoidRootPart
+    if hrp then
+        hrp.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+        hrp.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+        hrp.CFrame = CFrame.new(hrp.Position) * CFrame.Angles(0, hrp.CFrame:ToEulerAnglesYXZ(), 0)
+    end
+    
+    -- Heal character
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        humanoid.Health = humanoid.MaxHealth
+        print("✓ Health restored")
+    end
+end
+
+-- ===== CREATE GUI =====
+local playerGui = player:WaitForChild("PlayerGui")
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "BasecampResetGui"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = playerGui
+
+local buttonSizeX = isMobile and 32 or 36
+local buttonSizeY = isMobile and 32 or 36
+local buttonSize = UDim2.new(0, buttonSizeX, 0, buttonSizeY)
+local buttonPosition = UDim2.new(1, -42, 0, -2)
+
+-- Main Button
+local toggleButton = Instance.new("TextButton")
+toggleButton.Name = "ResetButton"
+toggleButton.Size = buttonSize
+toggleButton.Position = buttonPosition
+toggleButton.BackgroundColor3 = Color3.fromRGB(59, 89, 152)
+toggleButton.BackgroundTransparency = 0.1
+toggleButton.BorderSizePixel = 0
+toggleButton.Font = Enum.Font.GothamBold
+toggleButton.TextSize = isMobile and 18 or 20
+toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+toggleButton.Text = "⌂"
+toggleButton.Parent = screenGui
+
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 10)
+corner.Parent = toggleButton
+
+local stroke = Instance.new("UIStroke")
+stroke.Color = Color3.fromRGB(100, 150, 220)
+stroke.Thickness = 1.5
+stroke.Parent = toggleButton
+
+-- Hover effect
+toggleButton.MouseEnter:Connect(function()
+    local tweenInfo = TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    TweenService:Create(toggleButton, tweenInfo, {BackgroundColor3 = Color3.fromRGB(79, 109, 172)}):Play()
+    TweenService:Create(stroke, tweenInfo, {Color = Color3.fromRGB(150, 200, 255)}):Play()
+end)
+
+toggleButton.MouseLeave:Connect(function()
+    local tweenInfo = TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    TweenService:Create(toggleButton, tweenInfo, {BackgroundColor3 = Color3.fromRGB(59, 89, 152)}):Play()
+    TweenService:Create(stroke, tweenInfo, {Color = Color3.fromRGB(100, 150, 220)}):Play()
+end)
+
+-- Click animation
+toggleButton.MouseButton1Click:Connect(function()
+    local pulseDown = TweenService:Create(
+        toggleButton,
+        TweenInfo.new(0.05, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+        {Size = UDim2.new(0, buttonSizeX * 0.9, 0, buttonSizeY * 0.9)}
+    )
+    pulseDown:Play()
+    
+    resetToBasecamp()
+    
+    pulseDown.Completed:Connect(function()
+        TweenService:Create(
+            toggleButton,
+            TweenInfo.new(0.08, Enum.EasingStyle.Elastic, Enum.EasingDirection.Out),
+            {Size = buttonSize}
+        ):Play()
+    end)
+    
+    TweenService:Create(stroke, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), 
+        {Color = Color3.fromRGB(255, 255, 255)}):Play()
+    
+    wait(0.1)
+    TweenService:Create(stroke, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), 
+        {Color = Color3.fromRGB(100, 150, 220)}):Play()
+end)
+
+toggleButton.TouchTap:Connect(function()
+    resetToBasecamp()
+end)
+
+-- ===== NOTIFICATION FUNCTION =====
+local function showNotification(text, duration)
+    local label = Instance.new("TextLabel")
+    label.Name = "ResetNotification"
+    label.Size = UDim2.new(0, 220, 0, 45)
+    label.Position = UDim2.new(1, -240, 0, 55)
+    label.BackgroundColor3 = Color3.fromRGB(59, 89, 152)
+    label.BackgroundTransparency = 0.15
+    label.TextColor3 = Color3.fromRGB(255, 255, 255)
+    label.TextSize = 12
+    label.Font = Enum.Font.Gotham
+    label.Text = text
+    label.TextWrapped = true
+    label.Parent = screenGui
+    
+    local labelCorner = Instance.new("UICorner")
+    labelCorner.CornerRadius = UDim.new(0, 8)
+    labelCorner.Parent = label
+    
+    local labelStroke = Instance.new("UIStroke")
+    labelStroke.Color = Color3.fromRGB(100, 150, 220)
+    labelStroke.Thickness = 1
+    labelStroke.Parent = label
+    
+    wait(duration or 3)
+    label:Destroy()
+end
+
+showNotification("⌂ Basecamp Reset Ready\n• Reset Checkpoint ke 0\n• Summit tetap tersimpan", 5)
+
+print("✓ Basecamp Reset Script Loaded (CLIENT)!")
+print("✓ Compatible with StatsCore Sequential CP System")
+print("✓ Checkpoint akan di-reset via SERVER")
