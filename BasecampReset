@@ -3,6 +3,7 @@
 
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
 
 local player = Players.LocalPlayer
 local mouse = player:GetMouse()
@@ -71,55 +72,78 @@ stroke.Color = Color3.fromRGB(100, 150, 220)
 stroke.Thickness = 1.5
 stroke.Parent = toggleButton
 
--- Hover effect
+-- Hover effect dengan animasi ringan
 toggleButton.MouseEnter:Connect(function()
-    local tweenService = game:GetService("TweenService")
-    
-    -- Change color
+    -- Change color smooth
     local tweenInfo = TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-    tweenService:Create(
+    TweenService:Create(
         toggleButton,
         tweenInfo,
         {BackgroundColor3 = Color3.fromRGB(79, 109, 172)}
     ):Play()
     
     -- Change stroke color
-    stroke.Color = Color3.fromRGB(150, 200, 255)
+    TweenService:Create(
+        stroke,
+        tweenInfo,
+        {Color = Color3.fromRGB(150, 200, 255)}
+    ):Play()
 end)
 
 toggleButton.MouseLeave:Connect(function()
-    local tweenService = game:GetService("TweenService")
-    
-    -- Reset color
+    -- Reset color smooth
     local tweenInfo = TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-    tweenService:Create(
+    TweenService:Create(
         toggleButton,
         tweenInfo,
         {BackgroundColor3 = Color3.fromRGB(59, 89, 152)}
     ):Play()
     
     -- Reset stroke color
-    stroke.Color = Color3.fromRGB(100, 150, 220)
+    TweenService:Create(
+        stroke,
+        tweenInfo,
+        {Color = Color3.fromRGB(100, 150, 220)}
+    ):Play()
 end)
 
--- Click animation dan function
+-- Click animation dengan pulse effect (ringan dan smooth)
 toggleButton.MouseButton1Click:Connect(function()
-    local tweenService = game:GetService("TweenService")
-    
-    -- Scale down effect
-    local scaledDownSize = UDim2.new(0, buttonSizeX * 0.85, 0, buttonSizeY * 0.85)
-    local scaleDownInfo = TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
-    local scaleDown = tweenService:Create(toggleButton, scaleDownInfo, {Size = scaledDownSize})
-    scaleDown:Play()
+    -- Pulse effect 1 - Scale down sedikit
+    local pulseDown = TweenService:Create(
+        toggleButton,
+        TweenInfo.new(0.05, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+        {Size = UDim2.new(0, buttonSizeX * 0.9, 0, buttonSizeY * 0.9)}
+    )
+    pulseDown:Play()
     
     -- Reset to basecamp
     resetToBasecamp()
     
-    -- Scale up effect
-    scaleDown.Completed:Connect(function()
-        local scaleUpInfo = TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-        tweenService:Create(toggleButton, scaleUpInfo, {Size = buttonSize}):Play()
+    -- Pulse effect 2 - Scale kembali normal
+    pulseDown.Completed:Connect(function()
+        TweenService:Create(
+            toggleButton,
+            TweenInfo.new(0.08, Enum.EasingStyle.Elastic, Enum.EasingDirection.Out),
+            {Size = buttonSize}
+        ):Play()
     end)
+    
+    -- Flash effect pada stroke
+    TweenService:Create(
+        stroke,
+        TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {Color = Color3.fromRGB(255, 255, 255)}
+    ):Play()
+    
+    wait(0.1)
+    
+    -- Stroke kembali normal
+    TweenService:Create(
+        stroke,
+        TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {Color = Color3.fromRGB(100, 150, 220)}
+    ):Play()
 end)
 
 -- Touch support untuk mobile
@@ -161,4 +185,4 @@ showNotification("Klik tombol ⌂ untuk kembali ke basecamp", 4)
 print("✓ Basecamp Reset Script Loaded!")
 print("✓ Toggle Button Size - Mobile: 32x32, PC: 36x36")
 print("✓ Button Position - Pojok Kanan Atas Mentok")
-print("✓ Keyboard shortcut disabled - Button only!")
+print("✓ Animasi: Pulse + Flash Effect (Ringan & Smooth)")
